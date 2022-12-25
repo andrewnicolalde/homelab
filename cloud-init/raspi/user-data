@@ -68,7 +68,7 @@ packages:
 - zsh
 - unattended-upgrades
 - podman-docker
-#- [python3-serial, 3.5-1]
+- debconf-utils
 
 ## Write arbitrary files to the file-system (including binaries!)
 #write_files:
