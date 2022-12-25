@@ -6,10 +6,10 @@
 
   tasks:
     # Package unattended-upgrades should already be installed via cloud-init
+    # Modify package-level selections for unattended-upgrades package to enable automatic security updates
     - name: echo "unattended-upgrades unattended-upgrades/enable_auto_updates boolean true" | sudo debconf-set-selections  - auto install security updates
       debconf: name=unattended-upgrades question=unattended-upgrades/enable_auto_updates vtype=boolean value='true'
-    #- name: apt install unattended-upgrades
-    #  apt: name=unattended-upgrades
+    # Actually apply the aforementioned selections to the unattended-upgrades package configuration 
     - name: dpkg-reconfigure -f noninteractive unattended-upgrades
       command:
         cmd: dpkg-reconfigure -f noninteractive unattended-upgrades
