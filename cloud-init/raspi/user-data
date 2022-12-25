@@ -66,7 +66,7 @@ package_upgrade: true
 ## Install additional packages on first boot
 packages:
 - zsh
-#- rng-tools
+- unattended-upgrades
 #- python3-gpiozero
 #- [python3-serial, 3.5-1]
 
