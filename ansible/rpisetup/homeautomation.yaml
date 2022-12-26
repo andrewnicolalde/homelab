@@ -1,0 +1,21 @@
+---
+# Stand up a home automation host
+- name: Configure home assistant
+  hosts: all
+  remote_user: ubuntu
+
+  tasks:
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: homeautomation
+      become: yes
+    - name: Ensure podman-docker is installed
+      ansible.builtin.apt:
+        name: podman-docker
+        state: present
+      become: yes
+    - name: Ensure podman socket is available
+      ansible.builtin.systemd:
+        name: podman.socket
+        enabled: true
+      become: yes
