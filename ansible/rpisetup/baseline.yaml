@@ -5,6 +5,7 @@
   remote_user: ubuntu
 
   tasks:
+
     # Package unattended-upgrades should already be installed via cloud-init
     # Modify package-level selections for unattended-upgrades package to enable automatic security updates
     - name: echo "unattended-upgrades unattended-upgrades/enable_auto_updates boolean true" | sudo debconf-set-selections  - auto install security updates
@@ -14,3 +15,10 @@
       command:
         cmd: dpkg-reconfigure -f noninteractive unattended-upgrades
         creates: /etc/apt/apt.conf.d/20auto-upgrades
+    
+    # Configure tailscale repo and install
+    - name: Add tailscale repository
+      ansible.builtin.shell:
+        cmd: "curl -fsSL https://tailscale.com/install.sh | sh"
+        creates: /lib/systemd/system/tailscaled.service
+
