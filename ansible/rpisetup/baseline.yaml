@@ -26,6 +26,7 @@
     # Reboot
     - name: Reboot system
       ansible.builtin.reboot:
-        reboot_command: "sudo reboot"
+        msg: "Baseline ansible setup complete, rebooting!"
+      become: yes
 
 
