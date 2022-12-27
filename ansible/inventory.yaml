@@ -2,4 +2,4 @@
 usa:
   hosts:
     homeautomation:
-      ansible_host: 10.10.10.8
+      ansible_host: 100.84.214.6
