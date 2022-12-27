@@ -32,7 +32,7 @@
         name: podman-restart.service
         scope: user
         enabled: true
-        daemon_reload: true # Otherwise systemd won't see the new service the first time this
+        daemon_reload: true # Otherwise systemd won't see the new service the first time this step runs
     # Stand up HomeBridge
     - name: Copy docker-compose.yaml to remote host
       ansible.builtin.copy:
