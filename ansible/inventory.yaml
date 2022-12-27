@@ -2,4 +2,4 @@
 usa:
   hosts:
     homeautomation:
-      ansible_host: 100.84.214.6
+      ansible_host: homeautomation.taile9ca.ts.net
