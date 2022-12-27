@@ -4,7 +4,7 @@
   hosts: all
   remote_user: ubuntu
   environment:
-    DOCKER_HOST: unix:/run/user/1000/podman/podman.sock
+    DOCKER_HOST: unix:{{ ansible_env.XDG_RUNTIME_DIR }}/podman/podman.sock
   tasks:
     # Set proper hostname
     - name: Set hostname
@@ -22,14 +22,25 @@
         name: podman.socket
         enabled: true
       become: yes
+    - name: Copy podman-restart.service to user home directory
+      ansible.builtin.copy:
+        src: /lib/systemd/system/podman-restart.service
+        remote_src: true
+        dest: "{{ ansible_env.HOME }}/.config/systemd/user/"
+    - name: Ensure podman-restart service is enabled
+      ansible.builtin.systemd:
+        name: podman-restart.service
+        scope: user
+        enabled: true
+        daemon_reload: true # Otherwise systemd won't see the new service the first time this
     # Stand up HomeBridge
     - name: Copy docker-compose.yaml to remote host
       ansible.builtin.copy:
         src: ../../docker/homebridge/
-        dest: /home/ubuntu/homebridge-docker-compose/
+        dest: "{{ ansible_env.HOME }}/homebridge-docker-compose/"
         mode: 0600
         directory_mode: 0700
     - name: Stand up homebridge via docker-compose
       community.docker.docker_compose:
-        project_src: /home/ubuntu/homebridge-docker-compose
+        project_src: "{{ ansible_env.HOME }}/homebridge-docker-compose"
         state: present
