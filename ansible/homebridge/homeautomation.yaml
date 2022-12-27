@@ -3,16 +3,13 @@
 - name: Configure home assistant
   hosts: all
   remote_user: ubuntu
-
+  environment:
+    DOCKER_HOST: unix:/run/user/1000/podman/podman.sock
   tasks:
     # Set proper hostname & reboot
     - name: Set hostname
       ansible.builtin.hostname:
         name: homeautomation
-      become: yes
-    - name: Reboot system
-      ansible.builtin.reboot:
-        msg: "Baseline ansible setup complete, rebooting!"
       become: yes
     # Install & enable container runtime
     - name: Ensure podman-docker is installed
@@ -28,8 +25,10 @@
     # Stand up HomeBridge
     - name: Copy docker-compose.yaml to remote host
       ansible.builtin.copy:
-        src: ../../docker/homebridge/docker-compose.yaml
-        dest: /home/ubuntu/homebridge-docker-compose/docker-compose.yaml
+        src: ../../docker/homebridge/
+        dest: /home/ubuntu/homebridge-docker-compose/
+        mode: 0600
+        directory_mode: 0700
     - name: Stand up homebridge via docker-compose
       community.docker.docker_compose:
         project_src: /home/ubuntu/homebridge-docker-compose
