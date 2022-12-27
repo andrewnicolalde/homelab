@@ -22,11 +22,15 @@
         name: podman.socket
         enabled: true
       become: yes
-    - name: Copy podman-restart.service to user home directory
-      ansible.builtin.copy:
+    - name: Create systemd user folder
+      ansible.builtin.file:
+        dest: "{{ ansible_env.HOME }}/.config/systemd/user"
+        state: directory
+    - name: Link podman-restart.service to user home directory
+      ansible.builtin.file:
         src: /lib/systemd/system/podman-restart.service
-        remote_src: true
-        dest: "{{ ansible_env.HOME }}/.config/systemd/user/"
+        dest: "{{ ansible_env.HOME }}/.config/systemd/user/podman-restart.service"
+        state: link
     - name: Ensure podman-restart service is enabled
       ansible.builtin.systemd:
         name: podman-restart.service
