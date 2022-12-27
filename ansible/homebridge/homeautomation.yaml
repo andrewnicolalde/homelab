@@ -6,7 +6,7 @@
   environment:
     DOCKER_HOST: unix:/run/user/1000/podman/podman.sock
   tasks:
-    # Set proper hostname & reboot
+    # Set proper hostname
     - name: Set hostname
       ansible.builtin.hostname:
         name: homeautomation
