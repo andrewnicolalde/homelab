@@ -1,6 +1,6 @@
 ---
 # Stand up a home automation host
-- name: Configure home assistant
+- name: Configure home automation suite
   hosts: all
   remote_user: ubuntu
   environment:
@@ -37,6 +37,8 @@
         scope: user
         enabled: true
         daemon_reload: true # Otherwise systemd won't see the new service the first time this step runs
+    - name: Enable lingering for user
+      ansible.builtin.command: "loginctl enable-linger {{ ansible_env.USER }}"
     # Stand up HomeBridge
     - name: Copy HomeBridge docker-compose.yaml to remote host
       ansible.builtin.copy:
