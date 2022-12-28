@@ -38,13 +38,42 @@
         enabled: true
         daemon_reload: true # Otherwise systemd won't see the new service the first time this step runs
     # Stand up HomeBridge
-    - name: Copy docker-compose.yaml to remote host
+    - name: Copy HomeBridge docker-compose.yaml to remote host
       ansible.builtin.copy:
         src: ../../docker/homebridge/
         dest: "{{ ansible_env.HOME }}/homebridge-docker-compose/"
         mode: 0600
         directory_mode: 0700
-    - name: Stand up homebridge via docker-compose
+    - name: Stand up HomeBridge via docker-compose
       community.docker.docker_compose:
         project_src: "{{ ansible_env.HOME }}/homebridge-docker-compose"
         state: present
+    # Stand up HomeAssistant
+    - name: Create folder for HomeAssistant storage
+      ansible.builtin.file:
+        dest: "{{ ansible_env.HOME }}/homeassistant/volumes/config/"
+        state: directory
+    - name: Stand up HomeAssitant via podman # We need to use podman directly since it supports setting annotations, which we need for run.oci.keep_original_groups
+      containers.podman.podman_container:
+        state: started
+        name: homeassistant
+        image: "ghcr.io/home-assistant/home-assistant:stable"
+        restart_policy: always
+        device:
+          - "/dev/ttyUSB0:/dev/ttyUSB0"
+          - "/dev/ttyUSB1:/dev/ttyUSB1"
+        cap_add:
+          - "CAP_NET_RAW"
+          - "CAP_NET_BIND_SERVICE"
+        volume:
+          - "{{ ansible_env.HOME }}/homeassistant/volumes/config:/config"
+          - "/etc/localtime:/etc/localtime:ro"
+        ports:
+          - "8123:8123"
+        annotation:
+          # I've chosen to use Podman as my container engine. None of what I'm about to describe is even an issue if you're using Docker, apparently.
+          # This annotation is since we need to ensure that the ID of the `dailout` group (which owns /dev/ttyUSB0 and /dev/ttyUSB1) is preserved
+          # in our container. See https://github.com/containers/podman/issues/9706 and https://github.com/containers/podman/pull/9495
+          # for more information on the annotation, and https://github.com/BallAerospace/COSMOS/issues/1508#issuecomment-1124347673
+          # for info on why we can't use docker-compose with labels.
+          run.oci.keep_original_groups: "1"
