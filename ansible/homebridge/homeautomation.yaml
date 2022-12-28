@@ -72,7 +72,7 @@
           - "8123:8123"
         annotation:
           # I've chosen to use Podman as my container engine. None of what I'm about to describe is even an issue if you're using Docker, apparently.
-          # This annotation is since we need to ensure that the ID of the `dailout` group (which owns /dev/ttyUSB0 and /dev/ttyUSB1) is preserved
+          # This annotation is since we need to ensure that the ID of the `dailout` group (which owns /dev/ttyUSB0 and /dev/ttyUSB1) on our host is preserved
           # for that group in our container. See https://github.com/containers/podman/issues/9706 and https://github.com/containers/podman/pull/9495
           # for more information on the annotation, and https://github.com/BallAerospace/COSMOS/issues/1508#issuecomment-1124347673
           # for info on why we can't use docker-compose with annotations.
