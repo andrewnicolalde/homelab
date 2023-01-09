@@ -70,6 +70,7 @@ packages:
 - podman-docker
 - debconf-utils
 - docker-compose
+- sane-utils
 
 ## Write arbitrary files to the file-system (including binaries!)
 #write_files:
