@@ -50,6 +50,34 @@
       community.docker.docker_compose:
         project_src: "{{ ansible_env.HOME }}/homebridge-docker-compose"
         state: present
+    # Stand up HomeAssistant pre-reqs:
+    - name: Create folder for zwave-js-ui storage
+      ansible.builtin.file:
+        dest: "{{ ansible_env.HOME }}/zwave-js-ui/zwave-config"
+        state: directory
+    # Derived from https://raw.githubusercontent.com/zwave-js/zwave-js-ui/master/docker/docker-compose.yml
+    - name: Stand up zwave-js-ui container # Can't use docker compose, for same reason as Home Assistant, see below
+      containers.podman.podman_container:
+        state: started
+        name: zwave-js-ui
+        image: "docker.io/zwavejs/zwave-js-ui:latest"
+        restart_policy: always
+        tty: true
+        stop_signal: 2 # SIGINT
+        env:
+          SESSION_SECRET: "{{ lookup('amazon.aws.aws_secret', 'ansible/zwave-js-ui/SESSION_SECRET') }}"
+          ZWAVEJS_EXTERNAL_CONFIG: /usr/src/app/store/.config-db
+        network:
+          - host # We're going to isolate Home Assistant using a VLAN rather than doing it here. TODO, improve this
+        device:
+          - /dev/ttyUSB0:/dev/zwave
+        volume:
+          - "{{ ansible_env.HOME }}/zwave-js-ui/zwave-config:/usr/src/app/store"
+        ports:
+          - '8091:8091' # Web interface
+          - '3000:3000' # Websocket
+        annotation:
+          run.oci.keep_original_groups: "1" # Needed to allow container to access the ZWave device.
     # Stand up HomeAssistant
     - name: Create folder for HomeAssistant storage
       ansible.builtin.file:
@@ -62,7 +90,6 @@
         image: "ghcr.io/home-assistant/home-assistant:stable"
         restart_policy: always
         device:
-          - "/dev/ttyUSB0:/dev/ttyUSB0"
           - "/dev/ttyUSB1:/dev/ttyUSB1"
         cap_add:
           - "CAP_NET_RAW"
@@ -70,6 +97,8 @@
         volume:
           - "{{ ansible_env.HOME }}/homeassistant/volumes/config:/config"
           - "/etc/localtime:/etc/localtime:ro"
+        network:
+          - host # We're going to isolate Home Assistant at the network level
         ports:
           - "8123:8123"
         annotation:
