@@ -1,5 +1,8 @@
 ---
-usa:
-  hosts:
-    homeautomation:
-      ansible_host: homeautomation.taile9ca.ts.net
+all:
+  children:
+    usa:
+      hosts:
+        homeautomation:
+          hosts:
+            homeautomation.taile9ca.ts.net:
