@@ -2,7 +2,7 @@
 all:
   children:
     usa:
-      hosts:
+      children:
         homeautomation:
           hosts:
             homeautomation.taile9ca.ts.net:
