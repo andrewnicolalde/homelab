@@ -1,7 +1,7 @@
 ---
 # Stand up a home automation host
 - name: Configure home automation suite
-  hosts: all
+  hosts: homeautomation
   remote_user: ubuntu
   environment:
     DOCKER_HOST: unix:{{ ansible_env.XDG_RUNTIME_DIR }}/podman/podman.sock
@@ -65,7 +65,7 @@
         tty: true
         stop_signal: 2 # SIGINT
         env:
-          SESSION_SECRET: "{{ lookup('amazon.aws.aws_secret', 'ansible/zwave-js-ui/SESSION_SECRET') }}"
+          SESSION_SECRET: "{{ lookup('amazon.aws.aws_secret', 'ansible/zwave-js-ui/SESSION_SECRET', aws_profile='ansible_secretsmanager_homelab') }}"
           ZWAVEJS_EXTERNAL_CONFIG: /usr/src/app/store/.config-db
         network:
           - host # We're going to isolate Home Assistant using a VLAN rather than doing it here. TODO, improve this
