@@ -67,6 +67,7 @@ package_upgrade: true
 packages:
 - zsh
 - unattended-upgrades
+- apt-config-auto-update
 - podman-docker
 - debconf-utils
 - docker-compose
