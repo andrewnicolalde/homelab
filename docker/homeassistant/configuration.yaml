@@ -18,3 +18,8 @@ homeassistant:
   customize:
     climate.t6_pro_z_wave_programmable_thermostat:
       supported_features: 19
+
+homekit:
+  - filter:
+      include_domains:
+        - climate
