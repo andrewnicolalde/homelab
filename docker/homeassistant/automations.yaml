@@ -1,0 +1,59 @@
+- id: '1677466865079'
+  alias: Turn on Garage Lights when Door Opened
+  description: ''
+  trigger:
+  - type: unsafe
+    platform: device
+    device_id: 6d4daa14f4b608312e24557ae285e999
+    entity_id: binary_sensor.contact_sensor_gen2_intrusion_3
+    domain: binary_sensor
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 5b171de40faebb6a3ef9604c9b581886
+    entity_id: switch.garage_main_lights
+    domain: switch
+  mode: single
+- id: '1677466963328'
+  alias: Turn off Garage Main Lights after door closed
+  description: ''
+  trigger:
+  - type: not_unsafe
+    platform: device
+    device_id: 6d4daa14f4b608312e24557ae285e999
+    entity_id: binary_sensor.contact_sensor_gen2_intrusion_3
+    domain: binary_sensor
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 5b171de40faebb6a3ef9604c9b581886
+    entity_id: switch.garage_main_lights
+    domain: switch
+  mode: single
+- id: '1677467404538'
+  alias: Turn off Porch Patio Light at Sunrise
+  description: It's now light outside, so we don't need the porch light on.
+  trigger:
+  - platform: sun
+    event: sunrise
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 2bc8b56db0dc7c8890cdb6a1e85fea37
+    entity_id: switch.patio_porch_light
+    domain: switch
+  mode: single
+- id: '1677467474174'
+  alias: Turn on Porch Patio Light at Sunset
+  description: It's dark out, so we need to turn on the porch light.
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 0
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 2bc8b56db0dc7c8890cdb6a1e85fea37
+    entity_id: switch.patio_porch_light
+    domain: switch
+  mode: single
