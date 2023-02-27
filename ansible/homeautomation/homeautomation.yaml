@@ -79,10 +79,12 @@
         annotation:
           run.oci.keep_original_groups: "1" # Needed to allow container to access the ZWave device.
     # Stand up HomeAssistant
-    - name: Create folder for HomeAssistant storage
-      ansible.builtin.file:
-        dest: "{{ ansible_env.HOME }}/homeassistant/volumes/config/"
-        state: directory
+    - name: Copy HomeAssistant configuration to remote host
+      ansible.builtin.copy:
+        src: ../../docker/homeassistant/
+        dest: "{{ ansible_env.HOME }}/homeassistant/volumes/config"
+        mode: 0600
+        directory_mode: 0700
     - name: Stand up HomeAssitant via podman # We need to use podman directly since it supports setting annotations, which we need for run.oci.keep_original_groups
       containers.podman.podman_container:
         state: started
